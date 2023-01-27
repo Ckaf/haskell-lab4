@@ -1,0 +1,10 @@
+mrouted [ -p ] [ -c config_file ] [ -d debug_level ]
+
+Options:
+-p      Start mrouted in a non-pruning mode.
+-c      Specify a configuration file (default /etc/mrouted.conf).
+-d      Specify debug level (default 0).
+
+Description:
+
+bla-bla-bla

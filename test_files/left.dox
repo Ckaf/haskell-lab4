@@ -1,0 +1,37 @@
+@page mrouted.html mrouted
+
+@brief Менеджер многоадресной IP-маршрутизации
+
+@remark mrouted [-c config_file] [-d debug_level] [-p]
+
+@param -c, config_file
+Specify the configuration file (the default is /etc/mrouted.conf).
+
+@param -p
+Run mrouted in non-cutoff mode.
+
+@par Описание:
+
+@caution Для запуска этого сервиса необходимо войти в систему под учетной записью root. @endcaution
+
+Менеджер файловой системы @a fs-nfs2 представляет собой клиент NFS 2, работающий по протоколу TCP/IP. Для его использования необходим сервер NFS.
+
+Для работы менеджера файловой системы необходим транспортный уровень TCP/IP, например, обеспечиваемый @l{io-pkt-*}. Также требуются модули @l{Сетевая библиотека|libsocket.so}.
+
+По умолчанию эта утилита не определяет верхний предел значений аргумента @a индексные_дескрипторы.
+
+Точки монтирования также можно создать с помощью команды @l{mount} путем ввода @a nfs в качестве типа. Прежде чем создавать точки монтирования таким способом, необходимо запустить утилиту @a fs-nfs2. При запуске без аргументов утилита @a fs-nfs2 выполняется в фоновом режиме, что позволяет использовать команду @l{mount}.
+
+@par Примеры:
+
+Монтирование экспорта `/bin2` в качестве `/bin` с сервера NFS с именем @a server_node:
+
+@output{shell}fs-nfs2 server_node:/bin2 /bin &              @endoutput
+
+Монтирование `/nfs1` с использованием TCP и `/nfs2` с использованием UDP:
+
+@output{shell}fs-nfs2 -t host1:/ /nfs1 host2:/ /nfs2        @endoutput
+
+Монтирование обоих серверов с использованием TCP:
+
+@output{shell}fs-nfs2 -t host1:/ /nfs1 -t host2:/ /nfs2     @endoutput
