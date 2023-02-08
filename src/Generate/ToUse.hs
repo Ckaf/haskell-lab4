@@ -5,8 +5,6 @@ utilToUse
 ) where
 
 import Parser.CommonUtils
-import Data.Either (fromRight)
-import Parser.Use
 
 getOptionsInBrackets :: [Option] -> String
 getOptionsInBrackets = foldl(\s e -> do

@@ -11,10 +11,10 @@ import Control.Applicative ((<$>), (<*>), (<*), (*>), (<|>), many, (<$))
 import Control.Monad (void, ap)
 import Data.Char (isLetter, isDigit)
 import Text.Parsec.Error (ParseError)
-import Text.Parsec.Prim (parse, try, lookAhead)
-import Data.Maybe
+import Text.Parsec.Prim (try)
+import Data.Maybe()
 import Parser.CommonUtils 
-import Data.List (intercalate)
+
 
 
 -- option parsers
@@ -24,7 +24,7 @@ paramKeyword = lexeme $ string "@param"
 
 paramExpr1 :: Parser Option -- @param -p
 paramExpr1 = do
-  _ <- paramKeyword
+  void paramKeyword
   void $ lexeme $ char '-'
   paramName <- word
   return $ Option paramName Nothing Nothing
@@ -32,7 +32,7 @@ paramExpr1 = do
 
 paramExpr2 :: Parser Option -- @param \--p
 paramExpr2 = do
-  _ <- paramKeyword
+  void paramKeyword
   void $ lexeme $ string "\\--"
   paramName <- word
   return $ Option paramName Nothing Nothing
@@ -78,19 +78,19 @@ paramBlockExpr = do
 
 paramsBlockExpr :: Parser [Option]
 paramsBlockExpr = do
-  _ <- absorbToStopWordNoRead "@param"
+  void $ absorbToStopWordNoRead "@param"
   many1 $ lexeme paramBlockExpr 
     
 -- parse dox syntax 
 syntaxDoxExpr :: Parser Utils
 syntaxDoxExpr = do
-  _ <- lexeme $ absorbToStopWord "@remark"
+  void $ lexeme $ absorbToStopWord "@remark"
   syntaxExpr
 
 -- parse util description
 utilDescriptionExpr :: Parser String
 utilDescriptionExpr = do
-  _ <- manyTill (lexeme $ absorbToStopWord "@par") (lexeme $ string "Описание:")
+  void $ manyTill (lexeme $ absorbToStopWord "@par") (lexeme $ string "Описание:")
   t <- manyTill (absorbToStopWord "@") (lexeme $ string "par")
   return $ concat t 
   

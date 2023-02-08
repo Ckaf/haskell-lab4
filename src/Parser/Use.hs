@@ -3,13 +3,10 @@ useBlockExpr
 ) where
 
 import Text.Parsec.String (Parser)
-import Text.Parsec.Char (oneOf, char, digit, letter, string, anyChar, noneOf)
+import Text.Parsec.Char (oneOf, char, string, anyChar, noneOf)
 import Text.Parsec.Combinator (many1)
-import Control.Applicative ((<$>), (<*>), (<*), (*>), (<|>), many, (<$), liftA2)
-import Control.Monad (void, ap)
-import Data.Char (isLetter, isDigit)
-import Text.Parsec.Error (ParseError)
-import Text.Parsec.Prim (try)
+import Control.Applicative (many)
+import Control.Monad (void)
 import Data.Maybe()
 import Parser.CommonUtils
 
@@ -29,7 +26,7 @@ textWithIndent spaces_num = do
   if delta > 1  then return ""
   else do
     str1 <- many1 $ noneOf "\n"
-    _ <- many1 $ char '\n'
+    void $ many1 $ char '\n'
     str2 <- many $ textWithIndent spaces_num
     let strm2 = unwords str2
     return $  str1<>strm2
@@ -41,8 +38,8 @@ optionsDescriptionExpr = do
   spaces <- many1 $ oneOf " \t"
   let repl_sp = replace spaces "\t" "    "
   description1 <- many1 $ noneOf "\n"
-  _ <- many $ oneOf " \t"
-  _ <- char '\n'
+  void $ many $ oneOf " \t"
+  void $ char '\n'
   let indent = length repl_sp + length dash + length name
   description2 <- many $ textWithIndent indent
   let str_desc2 = unwords description2
@@ -51,7 +48,7 @@ optionsDescriptionExpr = do
   
 optionsBlockExpr :: Parser [Option]
 optionsBlockExpr = do
-  _ <- lexeme $ string "Options:"
+  void $ lexeme $ string "Options:"
   many optionsDescriptionExpr
 
   
@@ -59,7 +56,7 @@ useBlockExpr :: Parser UtilsOrDiff
 useBlockExpr = do
   u1 <- syntaxExpr
   opts <- optionsBlockExpr
-  _ <- absorbToStopWord "Description:"
+  void $ absorbToStopWord "Description:"
   utilDesc <- many anyChar
   case options u1 of
     Nothing -> return $ Diff (UtilsDiff [] ( foldl (\list opt -> optName opt : list) [] opts))

@@ -12,17 +12,9 @@ import System.Console.CmdArgs
 import Parser.Dox
 import Parser.Use
 import Parser.CommonUtils
-import Data.Either
 import Generate.ToMd
 import Generate.ToUse
-
-
-import Text.Parsec.Prim (runParser)
-import Text.Parsec.Error (ParseError)
 import Text.Parsec.String (parseFromFile)
-
-import System.IO
-import Data.Char (toUpper)
 --import Text.Parsec.ByteString.Lazy (parseFromFile)
 
 data IOptions = IOptions
@@ -81,15 +73,15 @@ parseInputC (IOptions "" usePath mdPath _) = do
               return Md
               
 parseInputC (IOptions doxPath usePath mdPath fg) = do
-  parseInputC (IOptions "" usePath mdPath fg)
+  _ <- parseInputC (IOptions "" usePath mdPath fg)
   prU' <- parseFromFile useBlockExpr usePath
   let prU = prU'
   prD' <- parseFromFile doxBlockExpression doxPath
   let prD = prD'
-  case [prU,prD] of
+  _ <- case [prU,prD] of
     [Right (Ut a), Right (Ut b)] -> do
       let diffs = findDiffOptions (options a) ( options b)
-      let dMd = maybe "" (diffMd "use syntax" "use options") diffs
+      let dMd = maybe "" (diffMd "use options" "dox options") diffs
       appendFile mdPath dMd
       return Md
     _ -> return Failed
