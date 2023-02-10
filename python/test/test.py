@@ -11,6 +11,7 @@ def path_to_bin():
 def test_1():
     os.popen(path_to_bin() +' --use ./test_files/left.use --dox ./test_files/left.dox')
     time.sleep(3)
+    print(path_to_bin() +' --use ./test_files/left.use --dox ./test_files/left.dox')
     file1 = open("./python/test/expected_results/lu_ld_diff.md", "r")
     file2 = open("diff.md", "r")
     expected = file1.read()
