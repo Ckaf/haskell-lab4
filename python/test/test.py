@@ -9,10 +9,9 @@ def path_to_bin():
     return bin_p
 
 def test_1():
-    os.popen(path_to_bin() +' --use ./test_files/left.use --dox ./test_files/left.dox')
-    time.sleep(5)
-    print(path_to_bin() +' --use ./test_files/left.use --dox ./test_files/left.dox')
-    file1 = open("./python/test/expected_results/lu_ld_diff.md", "r")
+    os.popen(path_to_bin() +' --use ./test_files/right.use --dox ./test_files/left.dox')
+    time.sleep(3)
+    file1 = open("./python/test/expected_results/ru_ld_diff.md", "r")
     file2 = open("diff.md", "r")
     expected = file1.read()
     res = file2.read()
@@ -20,9 +19,9 @@ def test_1():
 
 
 def test_2():
-    os.popen(path_to_bin() +' --use ./test_files/right.use --dox ./test_files/left.dox')
-    time.sleep(3)
-    file1 = open("./python/test/expected_results/ru_ld_diff.md", "r")
+    os.popen(path_to_bin() +' --use ./test_files/left.use --dox ./test_files/left.dox')
+    time.sleep(5)
+    file1 = open("./python/test/expected_results/lu_ld_diff.md", "r")
     file2 = open("diff.md", "r")
     expected = file1.read()
     res = file2.read()
