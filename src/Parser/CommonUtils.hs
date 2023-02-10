@@ -28,11 +28,11 @@ wordWithoutLexem =  (:) <$> firstChar <*> many nonFirstChar
 
 bracketExpr :: Parser Option -- todo need fix [[]]
 bracketExpr = do
-  _ <- lexeme $ char '['
-  _ <- many $ char '-' -- ignore -
+  void $ lexeme $ char '['
+  void $ many $ char '-' -- ignore -
   name <- word -- option name
   args <- many word
-  _ <- lexeme $ char ']'
+  void $ lexeme $ char ']'
   if null args then return $ Option name Nothing Nothing
   else return $ Option name (Just args) Nothing
 

@@ -8,40 +8,51 @@ import Parser.CommonUtils
 
 interweave :: String -> [String] -> [String] -> (Int, Int) -> String
 interweave s [] (y : ys) cls =
-  s ++ "| " ++ replicate (fst cls) ' ' ++ "|"
-    ++ replicate (floor $ (fromIntegral (snd cls - length y) :: Double) / 2) ' '
-    ++ y
-    ++ replicate (ceiling $ (fromIntegral (snd cls - length y) :: Double) / 2) ' '
-    ++ " | "
-    ++ "  Failed   "
-    ++ " |\n"
-    ++ interweave s [] ys cls
+  concat
+    [ s,
+      "| ",
+      replicate (fst cls) ' ',
+      "|",
+      replicate (floor $ (fromIntegral (snd cls - length y) :: Double) / 2) ' ',
+      y,
+      replicate (ceiling $ (fromIntegral (snd cls - length y) :: Double) / 2) ' ',
+      " | ",
+      "  Failed   ",
+      " |\n",
+      interweave s [] ys cls
+    ]
 interweave s (x : xs) [] cls =
-  s ++ "| "
-    ++ replicate (floor $ (fromIntegral (fst cls - length x) :: Double) / 2) ' '
-    ++ x
-    ++ replicate (ceiling $ (fromIntegral (fst cls - length x) :: Double) / 2) ' '
-    ++ " | "
-    ++ replicate (snd cls) ' '
-    ++ " | "
-    ++ "  Failed   "
-    ++ " |\n"
-    ++ interweave s xs [] cls
+  concat
+    [ s,
+      "| ",
+      replicate (floor $ (fromIntegral (fst cls - length x) :: Double) / 2) ' ',
+      x,
+      replicate (ceiling $ (fromIntegral (fst cls - length x) :: Double) / 2) ' ',
+      " | ",
+      replicate (snd cls) ' ',
+      " | ",
+      "  Failed   ",
+      " |\n",
+      interweave s xs [] cls
+    ]
 interweave s (x : xs) (y : ys) cls =
-  s ++ "| "
-    ++ replicate (floor $ (fromIntegral (fst cls - length x) :: Double) / 2) ' '
-    ++ x
-    ++ replicate (ceiling $ (fromIntegral (fst cls - length x) :: Double) / 2) ' '
-    ++ " | "
-    ++ replicate (floor $ (fromIntegral (snd cls - length y) :: Double) / 2) ' '
-    ++ y
-    ++ replicate (ceiling $ (fromIntegral (snd cls - length y) :: Double) / 2) ' '
-    ++ " | "
-    ++ case x == y of
-      True -> "    OK     "
-      False -> "  Failed   "
-    ++ " |\n"
-    ++ interweave s xs ys cls
+  concat
+    [ s,
+      "| ",
+      replicate (floor $ (fromIntegral (fst cls - length x) :: Double) / 2) ' ',
+      x,
+      replicate (ceiling $ (fromIntegral (fst cls - length x) :: Double) / 2) ' ',
+      " | ",
+      replicate (floor $ (fromIntegral (snd cls - length y) :: Double) / 2) ' ',
+      y,
+      replicate (ceiling $ (fromIntegral (snd cls - length y) :: Double) / 2) ' ',
+      " | ",
+      case x == y of
+        True -> "    OK     "
+        False -> "  Failed   ",
+      " |\n",
+      interweave s xs ys cls
+    ]
 interweave _ [] [] _ = ""
 
 diffMd :: String -> String -> UtilsDiff -> String
