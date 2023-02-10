@@ -9,6 +9,7 @@ def path_to_bin():
     return bin_p
 
 def test_1():
+    time.sleep(10)
     os.popen(path_to_bin() +' --use ./test_files/right.use --dox ./test_files/left.dox')
     time.sleep(10)
     file1 = open("./python/test/expected_results/ru_ld_diff.md", "r")
