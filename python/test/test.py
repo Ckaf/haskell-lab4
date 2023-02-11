@@ -9,13 +9,12 @@ def path_to_bin():
     return bin_p
 
 def test_1():
-    os.popen('touch diff.md')
-    os.popen(path_to_bin() +' --use ./test_files/right.use --dox ./test_files/left.dox')
-    time.sleep(10)
-    file1 = open("./python/test/expected_results/ru_ld_diff.md", "r")
-    file2 = open("diff.md", "r")
-    expected = file1.read()
-    res = file2.read()
+    stream = os.popen("rm -f diff.md; rm diff.md")
+    expected = stream.read()
+    os.popen(path_to_bin() +' --use ./test_files/right.use --dox ./test_files/right.dox')
+    time.sleep(3)
+    stream = os.popen("rm diff.md")
+    res = stream.read()
     assert(res == expected)
 
 
@@ -47,12 +46,12 @@ def test_4():
     assert(res == expected)
 
 def test_5():
-    stream = os.popen("rm -f diff.md; rm diff.md")
-    expected = stream.read()
-    os.popen(path_to_bin() +' --use ./test_files/right.use --dox ./test_files/right.dox')
-    time.sleep(3)
-    stream = os.popen("rm diff.md")
-    res = stream.read()
+    os.popen(path_to_bin() +' --use ./test_files/right.use --dox ./test_files/left.dox')
+    time.sleep(10)
+    file1 = open("./python/test/expected_results/ru_ld_diff.md", "r")
+    file2 = open("diff.md", "r")
+    expected = file1.read()
+    res = file2.read()
     assert(res == expected)
 
 def test_6():
