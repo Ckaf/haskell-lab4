@@ -13,7 +13,7 @@ def test_1():
     os.popen(path_to_bin() +' --use ./test_files/right.use --dox ./test_files/left.dox')
     time.sleep(10)
     file1 = open("./python/test/expected_results/ru_ld_diff.md", "r")
-    file2 = open("diff.md", "r")
+    file2 = open("./diff.md", "r")
     expected = file1.read()
     res = file2.read()
     assert(res == expected)
