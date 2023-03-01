@@ -15,6 +15,7 @@ import Parser.Dox
 import Parser.Use
 import System.Console.CmdArgs
 import Text.Parsec.String (parseFromFile)
+import Control.Monad (void)
 
 --import Text.Parsec.ByteString.Lazy (parseFromFile)
 
@@ -73,12 +74,12 @@ parseInputC (IOptions "" usePath mdPath _) = do
           appendFile mdPath dMd
           return Md
 parseInputC (IOptions doxPath usePath mdPath fg) = do
-  _ <- parseInputC (IOptions "" usePath mdPath fg)
+  void $ parseInputC (IOptions "" usePath mdPath fg)
   prU' <- parseFromFile useBlockExpr usePath
   let prU = prU'
   prD' <- parseFromFile doxBlockExpression doxPath
   let prD = prD'
-  _ <- case [prU, prD] of
+  void case [prU, prD] of
     [Right (Ut a), Right (Ut b)] -> do
       let diffs = findDiffOptions (options a) (options b)
       let dMd = maybe "" (diffMd "use options" "dox options") diffs
