@@ -47,9 +47,9 @@ interweave s (x : xs) (y : ys) cls =
       y,
       replicate (ceiling $ (fromIntegral (snd cls - length y) :: Double) / 2) ' ',
       " | ",
-      case x == y of
-        True -> "    OK     "
-        False -> "  Failed   ",
+      if x == y
+        then "    OK     "
+        else "  Failed   ",
       " |\n",
       interweave s xs ys cls
     ]

@@ -1,20 +1,21 @@
-{-# LANGUAGE DeriveDataTypeable #-}
 {-# LANGUAGE BlockArguments #-}
+{-# LANGUAGE DeriveDataTypeable #-}
 {-# LANGUAGE Strict #-}
 
 module Cli
-  (
-  Status, parseInput
+  ( Status,
+    parseInput,
   )
 where
 
-import System.Console.CmdArgs
-import Parser.Dox
-import Parser.Use
-import Parser.CommonUtils
 import Generate.ToMd
 import Generate.ToUse
+import Parser.CommonUtils
+import Parser.Dox
+import Parser.Use
+import System.Console.CmdArgs
 import Text.Parsec.String (parseFromFile)
+
 --import Text.Parsec.ByteString.Lazy (parseFromFile)
 
 data IOptions = IOptions
@@ -33,61 +34,58 @@ inputOptions =
       use = "" &= help "Path to use file",
       gu = False &= help "Generates use file (generated.use)"
     }
-    
-data Status = OK | Failed | Md | Us deriving Show
+
+data Status = OK | Failed | Md | Us deriving (Show)
 
 parseInputC :: IOptions -> IO Status
 parseInputC (IOptions "" "" _ _) = return Failed
 parseInputC (IOptions doxPath "" mdPath fg) = do
- pr <- parseFromFile doxBlockExpression doxPath
- let pr' = pr
- case pr' of
-      (Left m) -> do
-        print m
-        return Failed
-      (Right resultParse) -> do
-        case resultParse of
-          Ut u -> case fg of
-            False -> return OK
-            True -> do
+  pr <- parseFromFile doxBlockExpression doxPath
+  let pr' = pr
+  case pr' of
+    (Left m) -> do
+      print m
+      return Failed
+    (Right resultParse) -> do
+      case resultParse of
+        Ut u ->
+          if fg
+            then do
               generateUseFile u
               return Us
-          Diff d -> do
-            let dMd = diffMd "dox syntax" "dox options" d
-            appendFile mdPath dMd
-            return Md
- 
+            else return OK
+        Diff d -> do
+          let dMd = diffMd "dox syntax" "dox options" d
+          appendFile mdPath dMd
+          return Md
 parseInputC (IOptions "" usePath mdPath _) = do
-   pr <- parseFromFile useBlockExpr usePath
-   let pr' = pr
-   case pr' of
-        (Left m) -> do 
-          print m
-          return Failed
-        (Right resultParse) -> do
-          case resultParse of
-            Ut _ -> return OK
-            Diff d -> do
-              let dMd = diffMd "use syntax" "use options" d
-              appendFile mdPath dMd
-              return Md
-              
+  pr <- parseFromFile useBlockExpr usePath
+  let pr' = pr
+  case pr' of
+    (Left m) -> do
+      print m
+      return Failed
+    (Right resultParse) -> do
+      case resultParse of
+        Ut _ -> return OK
+        Diff d -> do
+          let dMd = diffMd "use syntax" "use options" d
+          appendFile mdPath dMd
+          return Md
 parseInputC (IOptions doxPath usePath mdPath fg) = do
   _ <- parseInputC (IOptions "" usePath mdPath fg)
   prU' <- parseFromFile useBlockExpr usePath
   let prU = prU'
   prD' <- parseFromFile doxBlockExpression doxPath
   let prD = prD'
-  _ <- case [prU,prD] of
+  _ <- case [prU, prD] of
     [Right (Ut a), Right (Ut b)] -> do
-      let diffs = findDiffOptions (options a) ( options b)
+      let diffs = findDiffOptions (options a) (options b)
       let dMd = maybe "" (diffMd "use options" "dox options") diffs
       appendFile mdPath dMd
       return Md
     _ -> return Failed
   parseInputC (IOptions doxPath "" mdPath fg)
-  
-  
 
 parseInput :: IO Status
 parseInput = do
@@ -96,7 +94,7 @@ parseInput = do
   writeFile (md input) ""
   let status = parseInputC input'
   status
-      
+
 generateUseFile :: Utils -> IO ()
 generateUseFile ul = do
   let str = utilToUse ul
